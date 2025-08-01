@@ -1,5 +1,7 @@
 # AutoPrivacy CLI
 
+[![Book Live Demo](https://img.shields.io/badge/Book%20Live%20Demo-%F0%9F%9A%80-indigo)](https://autoprivacy.dev/demo)
+
 > **Automated GDPR compliance for SaaS companies** - Generate professional DSAR evidence packs in minutes, not hours.
 
 [![npm version](https://badge.fury.io/js/autopv-cli.svg)](https://www.npmjs.com/package/autopv-cli)
