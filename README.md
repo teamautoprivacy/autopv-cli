@@ -22,6 +22,8 @@ autopv generate -e user@company.com -g github-org
 
 **Result:** Professional PDF evidence pack + CSV mapping + encrypted archive ready for delivery to data subjects.
 
+<p align="center"><img src="docs/assets/demo.gif" width="600"></p>
+
 ## 📦 Installation Options
 
 ### Option 1: npm (Recommended)
