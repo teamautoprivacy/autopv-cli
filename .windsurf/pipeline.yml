@@ -1,0 +1,328 @@
+name: AutoPrivacy CLI Release Pipeline
+description: Lint → Test → Build → Package → Sign → Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '22.14.0'
+  PNPM_VERSION: '10.14.0'
+
+jobs:
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm run lint
+
+      - name: TypeScript type checking
+        run: pnpm exec tsc --noEmit
+
+  test:
+    name: Unit Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm run test:run
+
+      - name: Generate coverage report
+        run: pnpm run test:coverage
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+  build:
+    name: Build & Package
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    outputs:
+      version: ${{ steps.package-info.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build TypeScript
+        run: pnpm run build
+
+      - name: Extract package info
+        id: package-info
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-dist
+          path: dist/
+
+  package-binaries:
+    name: Create Single-File Binaries
+    runs-on: ${{ matrix.os }}
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+            binary: autopv-linux
+          - os: macos-latest
+            target: macos
+            binary: autopv-macos
+          - os: windows-latest
+            target: windows
+            binary: autopv-win.exe
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-dist
+          path: dist/
+
+      - name: Create binary for ${{ matrix.target }}
+        run: pnpm run pkg:${{ matrix.target }}
+
+      - name: Generate SHA-256 checksum
+        shell: bash
+        run: |
+          cd binaries
+          if [[ "${{ matrix.target }}" == "windows" ]]; then
+            sha256sum ${{ matrix.binary }} > ${{ matrix.binary }}.sha256
+          else
+            shasum -a 256 ${{ matrix.binary }} > ${{ matrix.binary }}.sha256
+          fi
+
+      - name: Upload binary artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.target }}
+          path: |
+            binaries/${{ matrix.binary }}
+            binaries/${{ matrix.binary }}.sha256
+
+  smoke-test:
+    name: Smoke Test Binaries
+    runs-on: ${{ matrix.os }}
+    needs: package-binaries
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+            binary: autopv-linux
+          - os: macos-latest
+            target: macos
+            binary: autopv-macos
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-${{ matrix.target }}
+          path: binaries/
+
+      - name: Make binary executable
+        run: chmod +x binaries/${{ matrix.binary }}
+
+      - name: Test version command
+        run: ./binaries/${{ matrix.binary }} --version
+
+      - name: Test help command
+        run: ./binaries/${{ matrix.binary }} --help
+
+      - name: Test login show command
+        run: ./binaries/${{ matrix.binary }} login --show
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build, package-binaries, smoke-test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
+          path: release-assets/
+          merge-multiple: true
+
+      - name: Create release notes
+        run: |
+          echo "# AutoPrivacy CLI v${{ needs.build.outputs.version }}" > release-notes.md
+          echo "" >> release-notes.md
+          echo "## 🚀 Features" >> release-notes.md
+          echo "- Complete DSAR evidence generation pipeline" >> release-notes.md
+          echo "- GitHub and Stripe data export" >> release-notes.md
+          echo "- PII scrubbing and GDPR classification" >> release-notes.md
+          echo "- Professional PDF + CSV evidence packs" >> release-notes.md
+          echo "- Encrypted archive delivery" >> release-notes.md
+          echo "- Encrypted secrets management (\`autopv login\`)" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 📦 Installation" >> release-notes.md
+          echo "\`\`\`bash" >> release-notes.md
+          echo "# npm" >> release-notes.md
+          echo "npm install -g autopv-cli@${{ needs.build.outputs.version }}" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "# Homebrew (coming soon)" >> release-notes.md
+          echo "brew install autopv" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "# Direct binary download" >> release-notes.md
+          echo "curl -L https://github.com/autoprivacy/autopv-cli/releases/download/v${{ needs.build.outputs.version }}/autopv-linux -o autopv" >> release-notes.md
+          echo "chmod +x autopv" >> release-notes.md
+          echo "\`\`\`" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## 🔐 Quick Start" >> release-notes.md
+          echo "\`\`\`bash" >> release-notes.md
+          echo "autopv login  # Configure API keys" >> release-notes.md
+          echo "autopv generate -e user@company.com -g github-org" >> release-notes.md
+          echo "\`\`\`" >> release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: AutoPrivacy CLI ${{ needs.build.outputs.version }}
+          body_path: release-notes.md
+          files: |
+            release-assets/*
+          draft: true
+          prerelease: false
+
+  npm-publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: [build, smoke-test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-dist
+          path: dist/
+
+      - name: Publish to npm
+        run: pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  update-homebrew:
+    name: Update Homebrew Formula
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download macOS binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-macos
+          path: binaries/
+
+      - name: Calculate SHA256 for Homebrew
+        id: sha256
+        run: |
+          SHA256=$(cat binaries/autopv-macos.sha256 | cut -d' ' -f1)
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+
+      - name: Update Homebrew formula
+        run: |
+          sed -i 's/PLACEHOLDER_SHA256_HASH/${{ steps.sha256.outputs.sha256 }}/g' Formula/autopv.rb
+          sed -i 's/v0.2.0/${{ github.ref_name }}/g' Formula/autopv.rb
+
+      - name: Create Homebrew PR (placeholder)
+        run: |
+          echo "🍺 Homebrew formula updated for ${{ github.ref_name }}"
+          echo "Next: Submit PR to homebrew-core with updated Formula/autopv.rb"
+          cat Formula/autopv.rb

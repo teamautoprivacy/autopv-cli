@@ -1,0 +1,115 @@
+{
+  "commands": {
+    "generate": {
+      "aliases": [],
+      "args": {},
+      "description": "Generate DSAR evidence pack",
+      "flags": {
+        "email": {
+          "char": "e",
+          "description": "User email",
+          "name": "email",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "githubOrg": {
+          "char": "g",
+          "description": "GitHub org",
+          "name": "githubOrg",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "generate",
+      "pluginAlias": "autopv-cli",
+      "pluginName": "autopv-cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "generate.js"
+      ]
+    },
+    "login": {
+      "aliases": [],
+      "args": {},
+      "description": "Configure API keys and secrets for AutoPrivacy CLI",
+      "examples": [
+        "$ autopv login",
+        "$ autopv login --github-token ghp_your_token_here",
+        "$ autopv login --reset"
+      ],
+      "flags": {
+        "github-token": {
+          "char": "g",
+          "description": "GitHub Personal Access Token (repo:read, admin:org scopes)",
+          "name": "github-token",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "stripe-key": {
+          "char": "s",
+          "description": "Stripe Secret Key (optional, for payment data export)",
+          "name": "stripe-key",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "openai-key": {
+          "char": "o",
+          "description": "OpenAI API Key (for GDPR classification)",
+          "name": "openai-key",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "archive-password": {
+          "char": "p",
+          "description": "Password for encrypted evidence archives",
+          "name": "archive-password",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "reset": {
+          "char": "r",
+          "description": "Reset all stored credentials",
+          "name": "reset",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "show": {
+          "description": "Show current configuration (masked)",
+          "name": "show",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "login",
+      "pluginAlias": "autopv-cli",
+      "pluginName": "autopv-cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "login.js"
+      ]
+    }
+  },
+  "version": "0.2.1"
+}

@@ -1,0 +1,80 @@
+{
+  "name": "autopv-cli",
+  "version": "0.2.1",
+  "type": "module",
+  "description": "AutoPrivacy DSAR evidence-pack generator - Automated GDPR compliance for SaaS companies",
+  "keywords": ["gdpr", "dsar", "privacy", "compliance", "evidence", "automation", "cli"],
+  "author": "AutoPrivacy Team",
+  "homepage": "https://github.com/autoprivacy/autopv-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/autoprivacy/autopv-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/autoprivacy/autopv-cli/issues"
+  },
+  "license": "MIT",
+  "bin": {
+    "autopv": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "npx oclif dev",
+    "build": "tsc && npx oclif manifest && cp oclif.manifest.json dist/",
+    "start": "node dist/cli.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "manifest": "oclif manifest",
+    "lint": "eslint \"src/**/*.ts\"",
+    "pkg:linux": "mkdir -p binaries && pkg dist/cli.js --target node18-linux-x64 --output binaries/autopv-linux",
+    "pkg:macos": "mkdir -p binaries && pkg dist/cli.js --target node18-macos-x64 --output binaries/autopv-macos",
+    "pkg:windows": "mkdir -p binaries && pkg dist/cli.js --target node18-win-x64 --output binaries/autopv-win.exe",
+    "pkg:all": "pnpm run pkg:linux && pnpm run pkg:macos && pnpm run pkg:windows",
+    "checksums": "cd binaries && shasum -a 256 autopv-* > checksums.txt",
+    "release": "pnpm run build && pnpm run pkg:all && pnpm run checksums && pnpm publish",
+    "_prepublishOnly_disabled": "pnpm run build && pnpm run test:run"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.5.2",
+    "@octokit/rest": "^20.0.2",
+    "dotenv": "^16.4.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "yazl": "^2.5.1",
+    "openai": "^4.67.3",
+    "pdf-lib": "^1.17.1",
+    "stripe": "^14.21.0"
+  },
+  "devDependencies": {
+    "@oclif/test": "^3",
+    "@types/node": "^18",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5",
+    "vitest": "^1.0.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "pkg": "^5.8.1"
+  },
+  "oclif": {
+    "bin": "autopv",
+    "commands": "./dist/commands"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "assets": [
+      "dist/oclif.manifest.json"
+    ],
+    "outputPath": "binaries"
+  },
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.test.js",
+    "!dist/**/__tests__/**/*",
+    "oclif.manifest.json",
+    "README.md",
+    "LICENSE"
+  ]
+}
