@@ -6,7 +6,6 @@
 
 [![npm version](https://badge.fury.io/js/autopv-cli.svg)](https://www.npmjs.com/package/autopv-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI/CD](https://github.com/teamautoprivacy/autopv-cli/workflows/Release%20Pipeline/badge.svg)](https://github.com/teamautoprivacy/autopv-cli/actions)
 
 ## 🚀 Quick Start
 
