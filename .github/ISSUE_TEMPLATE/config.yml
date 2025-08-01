@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🚀 Book Live Demo
+    url: https://autoprivacy.dev/demo
+    about: Schedule a personalized demo of AutoPrivacy CLI for your organization
+  - name: 📚 Documentation
+    url: https://docs.autoprivacy.com
+    about: Read the complete AutoPrivacy CLI documentation
+  - name: 💬 Community Discussions
+    url: https://github.com/teamautoprivacy/autopv-cli/discussions
+    about: Join community discussions and share ideas

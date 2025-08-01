@@ -227,12 +227,21 @@ pnpm test:coverage # With coverage
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🆘 Need Help?
 
-- **Documentation**: [docs.autoprivacy.com](https://docs.autoprivacy.com)
-- **Issues**: [GitHub Issues](https://github.com/teamautoprivacy/autopv-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/teamautoprivacy/autopv-cli/discussions)
-- **Email**: support@autoprivacy.com
+> 💬 **Questions?** Click ["New Issue"](https://github.com/teamautoprivacy/autopv-cli/issues/new/choose) → select the _Question_ template.
+> 
+> **Average response time: < 24 hours** ⚡
+
+### Support Channels
+
+- **🎯 Questions & Help**: [GitHub Issues](https://github.com/teamautoprivacy/autopv-cli/issues) with `question` label
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/teamautoprivacy/autopv-cli/issues) with `bug` label  
+- **💬 Community Discussion**: [GitHub Discussions](https://github.com/teamautoprivacy/autopv-cli/discussions)
+- **📧 Enterprise Support**: support@autoprivacy.com
+- **📚 Documentation**: [docs.autoprivacy.com](https://docs.autoprivacy.com)
+
+**Why GitHub Issues?** Public Q&A helps the entire community and builds our knowledge base for faster future responses.
 
 ## 🗺️ Roadmap
 
