@@ -6,7 +6,7 @@
 
 [![npm version](https://badge.fury.io/js/autopv-cli.svg)](https://www.npmjs.com/package/autopv-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI/CD](https://github.com/autoprivacy/autopv-cli/workflows/Release%20Pipeline/badge.svg)](https://github.com/autoprivacy/autopv-cli/actions)
+[![CI/CD](https://github.com/teamautoprivacy/autopv-cli/workflows/Release%20Pipeline/badge.svg)](https://github.com/teamautoprivacy/autopv-cli/actions)
 
 ## 🚀 Quick Start
 
@@ -23,8 +23,6 @@ autopv generate -e user@company.com -g github-org
 
 **Result:** Professional PDF evidence pack + CSV mapping + encrypted archive ready for delivery to data subjects.
 
-![AutoPrivacy CLI Evidence Pack](https://github.com/autoprivacy/autopv-cli/raw/main/docs/evidence-pack-preview.png)
-
 ## 📦 Installation Options
 
 ### Option 1: npm (Recommended)
@@ -35,15 +33,15 @@ npm install -g autopv-cli@latest
 ### Option 2: Single-file binaries
 ```bash
 # macOS
-curl -L https://github.com/autoprivacy/autopv-cli/releases/latest/download/autopv-macos -o autopv
+curl -L https://github.com/teamautoprivacy/autopv-cli/releases/latest/download/autopv-macos -o autopv
 chmod +x autopv
 
 # Linux
-curl -L https://github.com/autoprivacy/autopv-cli/releases/latest/download/autopv-linux -o autopv
+curl -L https://github.com/teamautoprivacy/autopv-cli/releases/latest/download/autopv-linux -o autopv
 chmod +x autopv
 
 # Windows
-curl -L https://github.com/autoprivacy/autopv-cli/releases/latest/download/autopv-win.exe -o autopv.exe
+curl -L https://github.com/teamautoprivacy/autopv-cli/releases/latest/download/autopv-win.exe -o autopv.exe
 ```
 
 ### Option 3: Homebrew (Coming Soon)
@@ -211,7 +209,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ### Development Setup
 ```bash
-git clone https://github.com/autoprivacy/autopv-cli.git
+git clone https://github.com/teamautoprivacy/autopv-cli.git
 cd autopv-cli
 pnpm install
 pnpm run dev
@@ -231,8 +229,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🆘 Support
 
 - **Documentation**: [docs.autoprivacy.com](https://docs.autoprivacy.com)
-- **Issues**: [GitHub Issues](https://github.com/autoprivacy/autopv-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/autoprivacy/autopv-cli/discussions)
+- **Issues**: [GitHub Issues](https://github.com/teamautoprivacy/autopv-cli/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/teamautoprivacy/autopv-cli/discussions)
 - **Email**: support@autoprivacy.com
 
 ## 🗺️ Roadmap
